@@ -1,0 +1,11 @@
+name = custommodule
+description = Module for overriding many default drupal stuffs.
+package = custommodule
+core = 7.x
+
+
+; Information added by Drupal.org packaging script on 2014-07-10
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "Encore 3"
+datestamp = "1405030771"

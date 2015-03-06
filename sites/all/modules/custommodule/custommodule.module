@@ -1,0 +1,216 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: KTA30
+ * Date: 11/8/14
+ * Time: 1:05 PM
+ */
+
+
+
+function custommodule_init(){
+}
+
+function custommodule_permission() {
+    return array(
+        'custommodule verification' => array(
+            'title' => t('Check User Status'),
+            'description' => t('Perform view for my module.'),
+        ),
+        'custommodule updatestatus' => array(
+            'title' => t('Update User Status'),
+            'description' => t('Perform view for my module.'),
+        ),
+        'custommodule config' => array(
+            'title' => t('Admin Activity'),
+            'description' => t('Perform config for my module.'),
+        ),
+    );
+}
+
+function custommodule_menu() {
+    $items = array();
+    $items['custommodule/verifystatus'] = array(
+        'title' => 'Our Example ',
+        'page callback' => 'verifystatus',
+        'access callback' => TRUE,
+        'access arguments' => array('custom verification'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+
+    $items['custommodule/updatestatus'] = array(
+        'title' => 'Our Example ',
+        'page callback' => 'updatestatus',
+        'access callback' => TRUE,
+        'access arguments' => array('custom updatestatus'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+
+    return $items;
+}
+
+function verifystatus(){
+
+global $user;
+
+
+
+	$users = entity_load('user');
+    foreach ($users as $user2) {
+        if ($user2->uid == $user->uid) {
+            //$user->status = 1;
+           // entity_save('user', $user);
+		   
+		   if($user2->field_is_first['und'][0]['value'] == 0){
+				header('Location: '.$GLOBALS['base_url'].'/user-success');
+		   }else{
+				header('Location: '.$GLOBALS['base_url'].'/home');
+		   }
+		   
+        }
+    }
+    //header('Location: '.$GLOBALS['base_url'].'/user/login');
+
+}
+
+function updatestatus(){
+global $user;
+$uid = $user->uid;
+
+	$account = user_load($uid); // Loading account
+	$edit = array(
+	  'field_is_first' => array(
+		'und' => array(
+		  0 => array(
+			'value' => 1,
+		  ),
+		),
+	  ),
+	);
+	user_save($account, $edit);
+    header('Location: '.$GLOBALS['base_url'].'/home');
+
+}
+
+
+
+
+
+
+
+function custommodule_preprocess_node(&$variables) {
+    $node = $variables['node'];
+
+    if (  $variables['node']->type == 'dynamic_content') {
+        $variables['title'] = FALSE;
+        $variables['content']['links'] = FALSE;
+
+    }
+}
+
+
+
+function custommodule_form_alter(&$form, &$form_state, $form_id) {
+
+    if ($form_id == 'user_login') {
+        $form['name']['#attributes']['placeholder'] = t( 'Username' );
+        $form['name']['#description'] = t('');
+        $form['pass']['#description'] = t('');
+        $form['pass']['#attributes']['placeholder'] = t( 'Password' );
+        $form['#prefix'] = '<div class="login-page"><h2> <span>Log</span> in</h2>';
+        $form['#suffix'] = '<span class="sign-up-text">Forgot Your Password? <a href="'.$GLOBALS['base_url'].'/user/password"> Click Here</a></span></div>';
+    
+	
+	
+	}
+    if ($form_id == 'user_pass') {
+        $form['#prefix'] = '<div class="fpassword-page"><h2> <span>Forgot</span> Password</h2>';
+        $form['#suffix'] = '<span class="sign-up-text"><a href="'.$GLOBALS['base_url'].'/user/login"> Log In</a></span></div>';
+    
+	
+	
+	}
+	if ($form_id == 'user_register_form') {
+        //$form['account']['name']['#attributes']['placeholder'] = t( 'Desired Username' );
+		$form['account']['name']['#description'] = t('');
+        //$form['account']['mail']['#attributes']['placeholder'] = t( 'E-mail' );
+		$form['account']['mail']['#description'] = t('');
+        $form['#prefix'] = '<div class="registration-page"><h2> <span>Sign</span> up </h2>';
+        $form['#suffix'] = '<span class="sign-up-text">Already Have An Account?<a href="'.$GLOBALS['base_url'].'/user/login"> Login</a></span></div>';
+	}
+	
+	if($form_id == 'post_node_form'){
+		$x=arg();
+		if($x[2]=='edit')
+            $form['#prefix'] = '<h2> Edit Post </h2>';
+		else
+			$form['#prefix'] = '<h2> Add Post </h2>';
+			
+		$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_post';
+	}
+
+    if($form_id == 'product_node_form'){
+
+		$form['base']['model']['#description'] = '';
+        $form['taxonomy_catalog']['#type'] = 'hidden';
+        $form['base']['prices']['list_price']['#type'] = 'hidden';
+        $form['base']['prices']['cost']['#type'] = 'hidden';
+        $form['base']['shippable']['#type'] = 'hidden';
+        $form['base']['prices']['sell_price']['#title'] = 'Price';
+        $form['base']['prices']['sell_price']['#description'] = '';
+        $form['base']['ordering']['#description'] = '';
+
+
+        $x=arg();
+        if($x[2]=='edit')
+            $form['#prefix'] = '<h2>Edit Product</h2>';
+        else
+            $form['#prefix'] = '<h2>Add Product</h2>';
+        
+		$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_product';
+
+
+    }
+	
+	
+    if ($form_id == 'contactus_node_form') {
+        //$form['name']['#attributes']['placeholder'] = t( 'Username' );
+        //$form['name']['#description'] = t('');
+		
+		$form["title"]["#title"] = t('');
+		$form['title']['#attributes']['placeholder'] = t( 'First Name' );
+		$form["field_last_name"]['#title'] = t('');
+		$form["field_last_name"]['#attributes']['placeholder'] = t( 'Last Name' );
+		
+		
+    }
+
+	
+	
+	
+}
+
+function custommodule_js_alter(&$javascript) {
+	$x=arg();
+
+
+	// Swap out jQuery to use an updated version of the library.
+    if($x[0]=='product-details' ||$x[0]== 'products' ||$x[0]== 'allproducts'  )
+        $javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'custommodule') . '/js/jquery.js';
+}
+
+
+
+function MYMODULE_submit_post ($form, &$form_state) {
+    //code here
+    $form_state['redirect'] = '/post-list'; //REDIRECTS TO STEP 2 after submit
+}
+
+function MYMODULE_submit_product ($form, &$form_state) {
+    //code here
+    $form_state['redirect'] = '/product-admin-list'; //REDIRECTS TO STEP 2 after submit
+}
+
+
