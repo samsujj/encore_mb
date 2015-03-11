@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="influx_encore">
+    <serverData>
+      <paths name="influx_encore">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/encore_mb/" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
+

@@ -21,6 +21,38 @@ function custommodule_permission() {
             'title' => t('Update User Status'),
             'description' => t('Perform view for my module.'),
         ),
+        'custommodule updatestatus1' => array(
+            'title' => t('Update User Status'),
+            'description' => t('Perform view for my module.'),
+        ),
+        'custommodule create_social_post' => array(
+            'title' => t('FB Post'),
+            'description' => t('Create a social post.'),
+        ),
+        'custommodule get_social_post' => array(
+            'title' => t('FB Post'),
+            'description' => t('Get a social post Info.'),
+        ),
+        'custommodule get_all_fb_like' => array(
+            'title' => t('FB Post'),
+            'description' => t('Get a all fb like'),
+        ),
+        'custommodule get_all_fb_group' => array(
+            'title' => t('FB Post'),
+            'description' => t('Get a all fb group'),
+        ),
+        'custommodule get_fb_pagination' => array(
+            'title' => t('FB Post'),
+            'description' => t('Get a fb pagination'),
+        ),
+        'custommodule add_fb_page' => array(
+            'title' => t('FB Post'),
+            'description' => t('Get a add fb page'),
+        ),
+        'custommodule custom_node_delete' => array(
+            'title' => t('Node'),
+            'description' => t('custom node delete'),
+        ),
         'custommodule config' => array(
             'title' => t('Admin Activity'),
             'description' => t('Perform config for my module.'),
@@ -44,6 +76,72 @@ function custommodule_menu() {
         'page callback' => 'updatestatus',
         'access callback' => TRUE,
         'access arguments' => array('custom updatestatus'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+
+    $items['custommodule/updatestatus1'] = array(
+        'title' => 'Our Example ',
+        'page callback' => 'updatestatus1',
+        'access callback' => TRUE,
+        'access arguments' => array('custom updatestatus1'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+
+    $items['custommodule/create_social_post'] = array(
+        'title' => 'create social post ',
+        'page callback' => 'create_social_post',
+        'access callback' => TRUE,
+        'access arguments' => array('custom create_social_post'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/get_social_post'] = array(
+        'title' => 'get social post ',
+        'page callback' => 'get_social_post',
+        'access callback' => TRUE,
+        'access arguments' => array('custom get_social_post'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/get_all_fb_like'] = array(
+        'title' => 'get get all fb like ',
+        'page callback' => 'get_all_fb_like',
+        'access callback' => TRUE,
+        'access arguments' => array('custom get_all_fb_like'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/get_all_fb_group'] = array(
+        'title' => 'get get all fb group ',
+        'page callback' => 'get_all_fb_group',
+        'access callback' => TRUE,
+        'access arguments' => array('custom get_all_fb_group'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/get_fb_pagination'] = array(
+        'title' => 'get get fb pagination',
+        'page callback' => 'get_fb_pagination',
+        'access callback' => TRUE,
+        'access arguments' => array('custom get_fb_pagination'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/add_fb_page'] = array(
+        'title' => 'get add fb page',
+        'page callback' => 'add_fb_page',
+        'access callback' => TRUE,
+        'access arguments' => array('custom add_fb_page'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/custom_node_delete'] = array(
+        'title' => 'custom node delete',
+        'page callback' => 'custom_node_delete',
+        'access callback' => TRUE,
+        'access arguments' => array('custom custom_node_delete'),
         'expanded' => TRUE,
         'type'=>MENU_NORMAL_ITEM,
     );
@@ -75,7 +173,7 @@ global $user;
 
 }
 
-function updatestatus(){
+function updatestatus($id){
 global $user;
 $uid = $user->uid;
 
@@ -84,7 +182,28 @@ $uid = $user->uid;
 	  'field_is_first' => array(
 		'und' => array(
 		  0 => array(
-			'value' => 1,
+			'value' => $id,
+		  ),
+		),
+	  ),
+	);
+	user_save($account, $edit);
+    header('Location: '.$GLOBALS['base_url'].'/home');
+
+}
+
+function updatestatus1(){
+$id = $_POST['val'];
+
+global $user;
+$uid = $user->uid;
+
+	$account = user_load($uid); // Loading account
+	$edit = array(
+	  'field_is_first' => array(
+		'und' => array(
+		  0 => array(
+			'value' => $id,
 		  ),
 		),
 	  ),
@@ -95,6 +214,344 @@ $uid = $user->uid;
 }
 
 
+function create_social_post(){
+	global $user;
+	
+	$news_items = array();
+	
+	$query = new EntityFieldQuery();
+
+$query->entityCondition('entity_type', 'node')
+  ->entityCondition('bundle', 'social_media')
+  ->propertyCondition('status', NODE_PUBLISHED)
+  ->fieldCondition('field_user_id', 'value', intval($user->uid), '=')
+  ->fieldCondition('field_social_media_type', 'value', 'facebook', '=')
+  //->fieldCondition('field_social_media_sub_type', 'value', 'profile', '=')
+  //->fieldCondition('field_photo', 'fid', 'NULL', '!=')
+ // ->fieldCondition('field_faculty_tag', 'tid', $value)
+ // ->fieldCondition('field_news_publishdate', 'value', $year . '%', 'like')
+  //->fieldOrderBy('field_category_priority', 'value', 'DESC')
+  ->range(0, 100)
+  ->addMetaData('account', user_load(1)); // Run the query as user 1.
+
+$result = $query->execute();
+if (isset($result['node'])) {
+  $news_items_nids = array_keys($result['node']);
+  $news_items = entity_load('node', $news_items_nids);
+}
+
+	if(count($news_items)){
+		foreach($news_items as $key=>$val){	
+			node_delete($key);
+		}
+	}
+		
+		$node = new stdClass();
+		
+		$node->title = $_POST['social_media_name']."'s Facebook Profile";
+		$node->type = "social_media";
+		
+		node_object_prepare($node);
+		
+		$node->language = 'und'; // Or e.g. 'en' if locale is enabled
+		$node->uid = $user->uid; 
+		$node->status = 1; 
+		$node->promote = 0; 
+		$node->comment = 0;
+		
+		$node->field_user_id[$node->language][] = array(
+			'value' => intval($user->uid),
+		);
+		$node->field_social_media_type[$node->language][] = array(
+			'value' => 'facebook',
+		);
+		$node->field_social_media_sub_type[$node->language][] = array(
+			'value' => 'profile',
+		);
+		$node->field_social_media_id[$node->language][] = array(
+			'value' => $_POST['social_media_id'],
+		);
+		$node->field_social_media_name[$node->language][] = array(
+			'value' => $_POST['social_media_name'],
+		);
+		$node->field_token[$node->language][] = array(
+			'value' => $_POST['token'],
+		);
+		$node->field_expires[$node->language][] = array(
+			'value' => (time()+$_POST['expires']),
+		);
+		
+		$node = node_submit($node); // Prepare node for saving
+		node_save($node);
+		echo 1;
+	
+	
+	
+}
+
+function get_social_post(){
+	global $user;
+	
+	$data=array();
+	
+	$news_items = array();
+	
+	$query = new EntityFieldQuery();
+
+$query->entityCondition('entity_type', 'node')
+  ->entityCondition('bundle', 'social_media')
+  ->propertyCondition('status', NODE_PUBLISHED)
+  ->fieldCondition('field_user_id', 'value', intval($user->uid), '=')
+  ->fieldCondition('field_social_media_type', 'value', 'facebook', '=')
+ // ->fieldCondition('field_social_media_sub_type', 'value', 'profile', '=')
+  //->fieldCondition('field_photo', 'fid', 'NULL', '!=')
+ // ->fieldCondition('field_faculty_tag', 'tid', $value)
+ // ->fieldCondition('field_news_publishdate', 'value', $year . '%', 'like')
+  //->fieldOrderBy('field_category_priority', 'value', 'DESC')
+  ->range(0, 100)
+  ->addMetaData('account', user_load(1)); // Run the query as user 1.
+
+$result = $query->execute();
+if (isset($result['node'])) {
+  $news_items_nids = array_keys($result['node']);
+  $news_items = entity_load('node', $news_items_nids);
+}
+
+	if(count($news_items)){
+	
+		foreach($news_items as $key=>$val){
+			$nid = $key;
+			$node = node_load($nid); // $nid is the function's parameter
+			$node->language = 'und';
+			$field_social_media_sub_type =  $node->field_social_media_sub_type[$node->language][0]['value'];
+			$field_social_media_id =  $node->field_social_media_id[$node->language][0]['value'];
+			$field_social_media_name =  $node->field_social_media_name[$node->language][0]['value'];
+			$field_token =  $node->field_token[$node->language][0]['value'];
+			
+			if($field_social_media_sub_type == 'profile'){
+			
+				$res = file_get_contents("https://graph.facebook.com/me?fields=name&access_token=".$field_token);
+		
+				$res = json_decode($res);
+		
+				$data['profile'] = '<h2>Facebook Profile:</h2>
+						<h2><img src="https://graph.facebook.com/'.$field_social_media_id.'/picture" />
+						<span>'.$res->name.'</span></h2>';
+
+			
+			}
+			
+			if($field_social_media_sub_type == 'page'){
+				$res = file_get_contents("https://graph.facebook.com/".$field_social_media_id."?fields=name&access_token=".$field_token);
+				$res = json_decode($res);
+				
+				$data['page'][] = '<div><a target="_blank" href="https://www.facebook.com/pages/'.$res->name.'/'.$field_social_media_id.'">
+									<img style="padding:3px; width:50px; border:1px solid #9f9e8c;" alt="" src="http://graph.facebook.com/'.$field_social_media_id.'/picture">
+									</a>
+									<a target="_blank" href="https://www.facebook.com/pages/'.$res->name.'/'.$field_social_media_id.'">'.$res->name.'</a>
+									<input type="button" value="delete" class="page-del-btn" media-id="'.$nid.'" /></div>';
+			}
+
+			if($field_social_media_sub_type == 'group'){
+				$res = file_get_contents("https://graph.facebook.com/".$field_social_media_id."?fields=name&access_token=".$field_token);
+				$res = json_decode($res);
+				
+				$data['group'][] = '<div><a target="_blank" href="https://www.facebook.com/groups/'.$field_social_media_id.'">
+									<img style="padding:3px; width:50px; border:1px solid #9f9e8c;" alt="" src="http://graph.facebook.com/'.$field_social_media_id.'/picture">
+									</a>
+									<a target="_blank" href="https://www.facebook.com/groups/'.$field_social_media_id.'">'.$res->name.'</a>
+									<input type="button" value="delete" class="group-del-btn" media-id="'.$nid.'" /></div>';
+			}
+
+		}
+				
+	}
+	
+	echo json_encode($data);
+
+}
+
+function get_all_fb_like(){
+
+	global $user;
+	
+	$data="";
+	
+	$news_items = array();
+	
+	$query = new EntityFieldQuery();
+
+$query->entityCondition('entity_type', 'node')
+  ->entityCondition('bundle', 'social_media')
+  ->propertyCondition('status', NODE_PUBLISHED)
+  ->fieldCondition('field_user_id', 'value', intval($user->uid), '=')
+  ->fieldCondition('field_social_media_type', 'value', 'facebook', '=')
+  ->fieldCondition('field_social_media_sub_type', 'value', 'profile', '=')
+  //->fieldCondition('field_photo', 'fid', 'NULL', '!=')
+ // ->fieldCondition('field_faculty_tag', 'tid', $value)
+ // ->fieldCondition('field_news_publishdate', 'value', $year . '%', 'like')
+  //->fieldOrderBy('field_category_priority', 'value', 'DESC')
+  ->range(0, 100)
+  ->addMetaData('account', user_load(1)); // Run the query as user 1.
+
+$result = $query->execute();
+if (isset($result['node'])) {
+  $news_items_nids = array_keys($result['node']);
+  $news_items = entity_load('node', $news_items_nids);
+}
+
+	if(count($news_items)){
+		$nid =  array_keys($news_items);
+		$nid =  $nid[0];
+		
+		$node = node_load($nid); // $nid is the function's parameter
+		$node->language = 'und';
+		$field_token =  $node->field_token[$node->language][0]['value'];
+		
+		echo file_get_contents("https://graph.facebook.com/me/likes?access_token=".$field_token."&limit=100");
+		
+				
+	}
+	
+}
+function get_all_fb_group(){
+
+	global $user;
+	
+	$data="";
+	
+	$news_items = array();
+	
+	$query = new EntityFieldQuery();
+
+$query->entityCondition('entity_type', 'node')
+  ->entityCondition('bundle', 'social_media')
+  ->propertyCondition('status', NODE_PUBLISHED)
+  ->fieldCondition('field_user_id', 'value', intval($user->uid), '=')
+  ->fieldCondition('field_social_media_type', 'value', 'facebook', '=')
+  ->fieldCondition('field_social_media_sub_type', 'value', 'profile', '=')
+  //->fieldCondition('field_photo', 'fid', 'NULL', '!=')
+ // ->fieldCondition('field_faculty_tag', 'tid', $value)
+ // ->fieldCondition('field_news_publishdate', 'value', $year . '%', 'like')
+  //->fieldOrderBy('field_category_priority', 'value', 'DESC')
+  ->range(0, 100)
+  ->addMetaData('account', user_load(1)); // Run the query as user 1.
+
+$result = $query->execute();
+if (isset($result['node'])) {
+  $news_items_nids = array_keys($result['node']);
+  $news_items = entity_load('node', $news_items_nids);
+}
+
+	if(count($news_items)){
+		$nid =  array_keys($news_items);
+		$nid =  $nid[0];
+		
+		$node = node_load($nid); // $nid is the function's parameter
+		$node->language = 'und';
+		$field_token =  $node->field_token[$node->language][0]['value'];
+		
+		echo file_get_contents("https://graph.facebook.com/me/groups?access_token=".$field_token."&limit=100");
+		
+				
+	}
+	
+}
+
+function get_fb_pagination(){
+
+echo file_get_contents($_POST['nextLink']);
+
+}
+
+function add_fb_page(){
+
+	global $user;
+	
+	$news_items = array();
+	
+	$query = new EntityFieldQuery();
+
+	$query->entityCondition('entity_type', 'node')
+	  ->entityCondition('bundle', 'social_media')
+	  ->propertyCondition('status', NODE_PUBLISHED)
+	  ->fieldCondition('field_user_id', 'value', intval($user->uid), '=')
+	  ->fieldCondition('field_social_media_type', 'value', 'facebook', '=')
+	  ->fieldCondition('field_social_media_sub_type', 'value', 'profile', '=')
+	  //->fieldCondition('field_photo', 'fid', 'NULL', '!=')
+	 // ->fieldCondition('field_faculty_tag', 'tid', $value)
+	 // ->fieldCondition('field_news_publishdate', 'value', $year . '%', 'like')
+	  //->fieldOrderBy('field_category_priority', 'value', 'DESC')
+	  ->range(0, 100)
+	  ->addMetaData('account', user_load(1)); // Run the query as user 1.
+
+	$result = $query->execute();
+	if (isset($result['node'])) {
+	  $news_items_nids = array_keys($result['node']);
+	  $news_items = entity_load('node', $news_items_nids);
+	}
+
+	if(count($news_items)){
+	
+		$nid =  array_keys($news_items);
+		$nid =  $nid[0];
+		
+		$node1 = node_load($nid); // $nid is the function's parameter
+		$node1->language = 'und';
+		$field_token =  $node1->field_token[$node1->language][0]['value'];
+		$expires =  $node1->field_expires[$node1->language][0]['value'];
+		
+		
+		
+		$node = new stdClass();
+		
+		$node->title = "FB ".$_POST['type'].": ".$_POST['social_media_name'];
+		$node->type = "social_media";
+		
+		node_object_prepare($node);
+		
+		$node->language = 'und'; // Or e.g. 'en' if locale is enabled
+		$node->uid = $user->uid; 
+		$node->status = 1; 
+		$node->promote = 0; 
+		$node->comment = 0;
+		
+		$node->field_user_id[$node->language][] = array(
+			'value' => intval($user->uid),
+		);
+		$node->field_social_media_type[$node->language][] = array(
+			'value' => 'facebook',
+		);
+		$node->field_social_media_sub_type[$node->language][] = array(
+			'value' => $_POST['type'],
+		);
+		$node->field_social_media_id[$node->language][] = array(
+			'value' => $_POST['social_media_id'],
+		);
+		$node->field_social_media_name[$node->language][] = array(
+			'value' => $_POST['social_media_name'],
+		);
+		$node->field_token[$node->language][] = array(
+			'value' => $field_token,
+		);
+		$node->field_expires[$node->language][] = array(
+			'value' => $expires,
+		);
+		
+		$node = node_submit($node); // Prepare node for saving
+		$node1 = node_save($node);
+		echo $node->nid;
+	}
+
+}
+
+function custom_node_delete(){
+	$nid = intval($_POST['nid']);
+	
+	node_delete($nid);
+}
+
+
 
 
 
@@ -102,10 +559,20 @@ $uid = $user->uid;
 
 function custommodule_preprocess_node(&$variables) {
     $node = $variables['node'];
-
-    if (  $variables['node']->type == 'dynamic_content') {
+	
+	
+	global $user;
+	
+	if (  $variables['node']->type == 'dynamic_content') {
         $variables['title'] = FALSE;
         $variables['content']['links'] = FALSE;
+
+    }
+	
+	if (  $variables['node']->nid == 2 || $variables['node']->nid == 1 ) {
+        if(!$user->uid){
+			header('Location: '.$GLOBALS['base_url'].'/user/login');	
+		}
 
     }
 }
@@ -143,12 +610,14 @@ function custommodule_form_alter(&$form, &$form_state, $form_id) {
 	
 	if($form_id == 'post_node_form'){
 		$x=arg();
-		if($x[2]=='edit')
+		if($x[2]=='edit'){
             $form['#prefix'] = '<h2> Edit Post </h2>';
-		else
+			$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_post1';
+		}else{
 			$form['#prefix'] = '<h2> Add Post </h2>';
-			
-		$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_post';
+			$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_post';
+		}	
+		
 	}
 
     if($form_id == 'product_node_form'){
@@ -186,7 +655,7 @@ function custommodule_form_alter(&$form, &$form_state, $form_id) {
 		
 		
     }
-
+	
 	
 	
 	
@@ -194,18 +663,40 @@ function custommodule_form_alter(&$form, &$form_state, $form_id) {
 
 function custommodule_js_alter(&$javascript) {
 	$x=arg();
-
-
-	// Swap out jQuery to use an updated version of the library.
-    if($x[0]=='product-details' ||$x[0]== 'products' ||$x[0]== 'allproducts'  )
-        $javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'custommodule') . '/js/jquery.js';
+	
+	if($x[0]=='node' && $x[1]==2 )
+		$javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'custommodule') . '/js/jquery.js';
 }
 
 
 
+function MYMODULE_submit_post1 ($form, &$form_state) {
+    //code here
+    $form_state['redirect'] = 'post-list'; //REDIRECTS TO STEP 2 after submit
+}
+
 function MYMODULE_submit_post ($form, &$form_state) {
     //code here
-    $form_state['redirect'] = '/post-list'; //REDIRECTS TO STEP 2 after submit
+    $form_state['redirect'] = 'post-list'; //REDIRECTS TO STEP 2 after submit
+	
+	$node= $form_state['node'];
+	
+	
+	$is_schedule = $node->field_is_schedule['und'][0]['value'];
+	$open_chanel = $node->field_open_chanel['und'][0]['value'];
+	$social_media = $node->field_social_media['und'];
+	$is_facebook = 0;
+	if(in_array(array('tid'=>1),$social_media)){
+		$is_facebook = 1;
+	}
+	
+	$users = entity_load('user');
+	
+	echo "<pre>";
+	print_r($users);
+	
+	exit;
+	
 }
 
 function MYMODULE_submit_product ($form, &$form_state) {

@@ -73,11 +73,34 @@
  * @ingroup themeable
  */
 ?>
+<div id="loading" style="display:none;">
+<div id="loading-img"></div>
+</div>
+<div id="fb-root"></div>
+<div class="block-table-main">
+<div class="block-table-contain">
+
+<div class="left-contain">
+
+
+
+
+ <?php if (!empty($page['sidebar_first'])): ?>
+      <aside class="col-sm-3" role="complementary">
+        <?php print render($page['sidebar_first']); ?>
+      </aside>  <!-- /#sidebar-first -->
+    <?php endif; ?>
+	
+	</div>
+	
+	<div class="right-contain">
+
+
 <header id="navbar" role="banner" class="<?php print $navbar_classes; ?>">
   <div class="container">
     <div class="navbar-header">
       <?php if ($logo): ?>
-      <a class="logo navbar-btn pull-left" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
+      <a class="logo navbar-btn pull-left" href="<?php global $user; print  ( $user->uid )?$GLOBALS['base_url'].'/home':$front_page; ?>" title="<?php print t('Home'); ?>">
         <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
       </a>
       <?php endif; ?>
@@ -125,11 +148,7 @@
 
   <div class="row">
 
-    <?php if (!empty($page['sidebar_first'])): ?>
-      <aside class="col-sm-3" role="complementary">
-        <?php print render($page['sidebar_first']); ?>
-      </aside>  <!-- /#sidebar-first -->
-    <?php endif; ?>
+   
 
     <section<?php print $content_column_class; ?>>
       <?php if (!empty($page['highlighted'])): ?>
@@ -166,3 +185,7 @@
 <footer class="footer container">
   <?php print render($page['footer']); ?>
 </footer>
+
+</div>
+</div>
+</div>

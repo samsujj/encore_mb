@@ -25,6 +25,8 @@ regions[page_bottom]    = 'Page bottom'
 ;;;;;;;;;;;;;;;;;;;;;
 
 stylesheets[all][] = css/style.css
+stylesheets[all][] = css/video-js.css
+stylesheets[all][] = css/bootstrap-toggle.css
 
 
 ; For information on choosing the desired method, please read the Drupal
@@ -39,6 +41,11 @@ stylesheets[all][] = css/style.css
 ; ;; Scripts
 ; ;;;;;;;;;;;;;;;;;;;;;
 ; 
+ scripts[] = 'js/bootbox.min.js'
+ ;scripts[] = 'js/bootstrap-toggle.js'
+ scripts[] = 'js/common.js'
+ scripts[] = 'js/video.js'
+ scripts[] = 'js/json.js'
 ; scripts[] = 'bootstrap/js/affix.js'
 ; scripts[] = 'bootstrap/js/alert.js'
 ; scripts[] = 'bootstrap/js/button.js'
