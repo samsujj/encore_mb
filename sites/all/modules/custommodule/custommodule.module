@@ -209,13 +209,19 @@ $uid = $user->uid;
 	  ),
 	);
 	user_save($account, $edit);
-    header('Location: '.$GLOBALS['base_url'].'/home');
+    
 
 }
 
 
 function create_social_post(){
 	global $user;
+	
+	$uid = $user->uid;
+
+	$account = user_load($uid);
+	
+	$user_is_first = $account->field_is_first[und][0][value];
 	
 	$news_items = array();
 	
@@ -279,6 +285,9 @@ if (isset($result['node'])) {
 		);
 		$node->field_expires[$node->language][] = array(
 			'value' => (time()+$_POST['expires']),
+		);
+		$node->field_social_open_chanel[$node->language][] = array(
+			'value' => $user_is_first,
 		);
 		
 		$node = node_submit($node); // Prepare node for saving
@@ -468,6 +477,12 @@ function add_fb_page(){
 
 	global $user;
 	
+	$uid = $user->uid;
+
+	$account = user_load($uid);
+	
+	$user_is_first = $account->field_is_first[und][0][value];
+	
 	$news_items = array();
 	
 	$query = new EntityFieldQuery();
@@ -537,7 +552,9 @@ function add_fb_page(){
 		$node->field_expires[$node->language][] = array(
 			'value' => $expires,
 		);
-		
+		$node->field_social_open_chanel[$node->language][] = array(
+			'value' => $user_is_first,
+		);		
 		$node = node_submit($node); // Prepare node for saving
 		$node1 = node_save($node);
 		echo $node->nid;
@@ -609,6 +626,7 @@ function custommodule_form_alter(&$form, &$form_state, $form_id) {
 	}
 	
 	if($form_id == 'post_node_form'){
+	
 		$x=arg();
 		if($x[2]=='edit'){
             $form['#prefix'] = '<h2> Edit Post </h2>';
@@ -618,27 +636,15 @@ function custommodule_form_alter(&$form, &$form_state, $form_id) {
 			$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_post';
 		}	
 		
+		
+        
+    
+		
 	}
 
-    if($form_id == 'product_node_form'){
+    if($form_id == 'natural_post_settings_node_form'){
 
-		$form['base']['model']['#description'] = '';
-        $form['taxonomy_catalog']['#type'] = 'hidden';
-        $form['base']['prices']['list_price']['#type'] = 'hidden';
-        $form['base']['prices']['cost']['#type'] = 'hidden';
-        $form['base']['shippable']['#type'] = 'hidden';
-        $form['base']['prices']['sell_price']['#title'] = 'Price';
-        $form['base']['prices']['sell_price']['#description'] = '';
-        $form['base']['ordering']['#description'] = '';
-
-
-        $x=arg();
-        if($x[2]=='edit')
-            $form['#prefix'] = '<h2>Edit Product</h2>';
-        else
-            $form['#prefix'] = '<h2>Add Product</h2>';
-        
-		$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_product';
+		$form['actions']['submit']['#submit'][] = 'MYMODULE_submit_nPost';
 
 
     }
@@ -661,11 +667,12 @@ function custommodule_form_alter(&$form, &$form_state, $form_id) {
 	
 }
 
+
 function custommodule_js_alter(&$javascript) {
 	$x=arg();
 	
-	if($x[0]=='node' && $x[1]==2 )
-		$javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'custommodule') . '/js/jquery.js';
+	//if($x[0]=='node' && $x[1]==2 )
+		//$javascript['misc/jquery.js']['data'] = drupal_get_path('module', 'custommodule') . '/js/jquery.js';
 }
 
 
@@ -677,31 +684,197 @@ function MYMODULE_submit_post1 ($form, &$form_state) {
 
 function MYMODULE_submit_post ($form, &$form_state) {
     //code here
-    $form_state['redirect'] = 'post-list'; //REDIRECTS TO STEP 2 after submit
+    
+	global $user;
 	
 	$node= $form_state['node'];
+	
+	
 	
 	
 	$is_schedule = $node->field_is_schedule['und'][0]['value'];
 	$open_chanel = $node->field_open_chanel['und'][0]['value'];
 	$social_media = $node->field_social_media['und'];
+	$message = $node->title;
+	$hasMedia =  $node->field_has_media['und'][0]['value'];
+	$picture = "";
+	$link = "";
+	if($hasMedia){
+		$mediaType =  $node->field_media_type['und'][0]['value'];
+	
+	
+	if(isset($node->field_media_file)){
+		$fid = $node->field_media_file['und'][0]['fid'];
+		$finfo = file_load($fid);
+		$imgpath = $finfo->uri;
+		$picture = file_create_url($imgpath);
+	}
+	if(isset($node->field_media_video)){
+		$link = $GLOBALS['base_url']."/show-video/".$node->nid;
+	}
+	
+	}
+	
 	$is_facebook = 0;
 	if(in_array(array('tid'=>1),$social_media)){
 		$is_facebook = 1;
 	}
 	
-	$users = entity_load('user');
+	if($is_schedule == 0 && $is_facebook==1 && $open_chanel==1){
+
+		$news_items = array();
+		$query = new EntityFieldQuery();
+
+		$query->entityCondition('entity_type', 'node')
+		  ->entityCondition('bundle', 'social_media')
+		  ->propertyCondition('status', NODE_PUBLISHED)
+		  //->fieldCondition('field_user_id', 'value', intval($user->uid), '=')
+		  ->fieldCondition('field_social_media_type', 'value', 'facebook', '=')
+		  //->fieldCondition('field_social_media_sub_type', 'value', 'profile', '=')
+		  ->fieldCondition('field_social_open_chanel', 'value', 1, '=')
+		  //->fieldCondition('field_photo', 'fid', 'NULL', '!=')
+		 // ->fieldCondition('field_faculty_tag', 'tid', $value)
+		 // ->fieldCondition('field_news_publishdate', 'value', $year . '%', 'like')
+		  //->fieldOrderBy('field_category_priority', 'value', 'DESC')
+		  ->range(0, 100)
+		  ->addMetaData('account', user_load(1)); // Run the query as user 1.
+
+		$result = $query->execute();
+		if (isset($result['node'])) {
+		  $news_items_nids = array_keys($result['node']);
+		  $news_items = entity_load('node', $news_items_nids);
+		}
+		
+		if(count($news_items)){
+		
+			foreach($news_items as $key=>$val){
+			
+				$node2 = node_load($key);
+				$token =  $node2->field_token['und'][0]['value'];
+				$subType =  $node2->field_social_media_sub_type['und'][0]['value'];
+				$mediaId =  $node2->field_social_media_id['und'][0]['value'];
+				$mediaName =  $node2->field_social_media_name['und'][0]['value'];
+				
+				
+				
+				
+				if($subType == 'profile'){
+					$url = 'https://graph.facebook.com/me/feed';
+				}else{
+					$url = 'https://graph.facebook.com/'.$mediaId.'/feed';
+				}
+				
+				if(empty($link)){
+					$attachment =  array(
+					'access_token' => $token,
+					'message' => $message,
+					'picture' => $picture
+					);
+				}else{
+					$attachment =  array(
+					'access_token' => $token,
+					'message' => $message,
+					'link' => $link
+					);
+				}
+				
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,$url);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+				curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+				curl_setopt($ch, CURLOPT_POST, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $attachment);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);  //to suppress the curl output 
+				$result = curl_exec($ch);
+				curl_close ($ch);
+				
+				
+				$result = json_decode($result);
+				if(!isset($result->error)){
+					$posted = 1;
+					$post_id= $result->id;
+					$error = "";
+				}else{
+					$posted = 0;
+					$post_id= "";
+					$error = $result->error->message;
+				}
+				
+			
+				
+				
+				
+				
+				
+				
+		$postnode = new stdClass();
+		
+		$postnode->title = $message;
+		$postnode->type = "post_report";
+		
+		if($hasMedia == 0){
+			$postType = "text";
+		}else{
+			$postType = $mediaType;
+		}
 	
-	echo "<pre>";
-	print_r($users);
+		
+		node_object_prepare($postnode);
+		
+		$postnode->language = 'und'; // Or e.g. 'en' if locale is enabled
+		$postnode->uid = $user->uid; 
+		$postnode->status = 1; 
+		$postnode->promote = 0; 
+		$postnode->comment = 0;
+		
+		$postnode->field_report_media_type[$node->language][] = array(
+			'value' => 'facebook',
+		);
+		$postnode->field_report_media_sub_type[$node->language][] = array(
+			'value' => $subType,
+		);
+		$postnode->field_report_post_type[$node->language][] = array(
+			'value' => $postType,
+		);
+		$postnode->field_report_posted_time[$node->language][] = array(
+			'value' => date('Y-m-d H:i:s'),
+		);
+		$postnode->field_posted_[$node->language][] = array(
+			'value' => $posted,
+		);
+		$postnode->field_message[$node->language][] = array(
+			'value' => $error,
+		);
+		$postnode->field_report_post_name[$node->language][] = array(
+			'value' => $mediaName,
+		);
+		$postnode->field_fb_post_id[$node->language][] = array(
+			'value' => $post_id,
+		);
+		$postnode = node_submit($postnode); // Prepare node for saving
+		node_save($postnode);
+				
+				
+				
+				
+				
+				
+			
+			}
+		
+		}
 	
-	exit;
+
+
+	}
+	
+	$form_state['redirect'] = 'post-list'; //REDIRECTS TO STEP 2 after submit
+	
+	
 	
 }
 
-function MYMODULE_submit_product ($form, &$form_state) {
+function MYMODULE_submit_nPost ($form, &$form_state) {
     //code here
-    $form_state['redirect'] = '/product-admin-list'; //REDIRECTS TO STEP 2 after submit
+    $form_state['redirect'] = 'node/214/edit'; //REDIRECTS TO STEP 2 after submit
 }
-
-
