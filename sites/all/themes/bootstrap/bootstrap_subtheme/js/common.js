@@ -15,7 +15,106 @@ var base = '/encore_mb';
 			   });
 			   
 			});
-
+			
+			var pathname = window.location.pathname; 
+			
+			if(pathname=='/encore_mb/admin/config/services/twitter'){
+				var vars = [], hash;
+				var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+				for(var i = 0; i < hashes.length; i++)
+				{
+					hash = hashes[i].split('=');
+					vars.push(hash[0]);
+					vars[hash[0]] = hash[1];
+				}
+				var fromVal = vars['from'];
+				
+				if(fromVal == 'home'){
+					$('form#twitter-auth-account-form').submit();
+					$('div.region-content').hide();
+				}
+				
+			}
+			
+			if (pathname.indexOf("/edit/linkedin") >= 0){
+				
+				var vars = [], hash;
+				var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+				for(var i = 0; i < hashes.length; i++)
+				{
+					hash = hashes[i].split('=');
+					vars.push(hash[0]);
+					vars[hash[0]] = hash[1];
+				}
+				var fromVal = vars['from'];
+				
+				if($('form#linkedin-user-enable-form').length>0){
+						$('form#linkedin-user-enable-form').submit();
+					}else{
+						window.location.href= '/home?qt-home_tab=2#qt-home_tab';
+					}
+					
+					$('div.region-content').hide();
+				
+			}
+			
+			/* for Linked In [start] */
+			
+			$('#post-node-form').find('#linkedin-status-posting').prop('checked',false);
+			$('#post-node-form').find('fieldset#edit-linkedin-status').hide();
+			
+			$('#post-node-form').find('#edit-field-social-media-und-3').click(function () {
+				if ($(this).is(':checked')) {
+					if($('#post-node-form').find('#edit-field-open-chanel-und').is(':checked'))
+						$('#post-node-form').find('#linkedin-status-posting').prop('checked',true);
+					else
+						$('#post-node-form').find('#linkedin-status-posting').prop('checked',false);
+				} else {
+					$('#post-node-form').find('#linkedin-status-posting').prop('checked',false);
+				}
+			});
+			
+			$('#post-node-form').find('#edit-field-open-chanel-und').click(function () {
+				if ($(this).is(':checked')) {
+					if($('#post-node-form').find('#edit-field-social-media-und-3').is(':checked'))
+						$('#post-node-form').find('#linkedin-status-posting').prop('checked',true);
+					else
+						$('#post-node-form').find('#linkedin-status-posting').prop('checked',false);
+				} else {
+					$('#post-node-form').find('#linkedin-status-posting').prop('checked',false);
+				}
+			});
+			
+			
+			/* for Linked In [end] */
+			/* for Twitter [start] */
+			
+			$('#post-node-form').find('#twitter-toggle').prop('checked',false);
+			$('#post-node-form').find('.vertical-tabs').hide();
+			
+			$('#post-node-form').find('#edit-field-social-media-und-2').click(function () {
+				if ($(this).is(':checked')) {
+					if($('#post-node-form').find('#edit-field-open-chanel-und').is(':checked'))
+						$('#post-node-form').find('#twitter-toggle').prop('checked',true);
+					else
+						$('#post-node-form').find('#twitter-toggle').prop('checked',false);
+				} else {
+					$('#post-node-form').find('#twitter-toggle').prop('checked',false);
+				}
+			});
+			
+			$('#post-node-form').find('#edit-field-open-chanel-und').click(function () {
+				if ($(this).is(':checked')) {
+					if($('#post-node-form').find('#edit-field-social-media-und-2').is(':checked'))
+						$('#post-node-form').find('#twitter-toggle').prop('checked',true);
+					else
+						$('#post-node-form').find('#twitter-toggle').prop('checked',false);
+				} else {
+					$('#post-node-form').find('#twitter-toggle').prop('checked',false);
+				}
+			});
+			
+			/* for Twitter [end] */
 			
 			/*For Facebook[start]*/
 			var appId = '413908115333386';
@@ -80,9 +179,9 @@ var base = '/encore_mb';
 			   
 			   var htmlres=jsonParse(res);
 			   
-			   if(typeof(htmlres['profile']) !='undefined'){
+			   if(typeof(htmlres['fb']['profile']) !='undefined'){
 			   
-				   $('#cur-fb-profile').html(htmlres['profile']);
+				   $('#cur-fb-profile').html(htmlres['fb']['profile']);
 				   $('#cur-fb-profile').css('border','solid 1px #ddd');
 				   $('#cur-fb-profile').css('padding','10px 0');
 				   
@@ -93,23 +192,23 @@ var base = '/encore_mb';
 				   $('#fb-group-manage').hide();
 			   }
 			   
-			   if(typeof(htmlres['page']) !='undefined'){
+			   if(typeof(htmlres['fb']['page']) !='undefined'){
 			   
 				   $('#page-list').css('border','solid 1px #ddd');
 				   $('#page-list').css('padding-bottom','2%');
 				   
-				   for(n in htmlres['page']){
-					   $('#page-list').append(htmlres['page'][n]);
+				   for(n in htmlres['fb']['page']){
+					   $('#page-list').append(htmlres['fb']['page'][n]);
 				   }
 			   }
 			   
-			   if(typeof(htmlres['group']) !='undefined'){
+			   if(typeof(htmlres['fb']['group']) !='undefined'){
 			   
 				   $('#group-list').css('border','solid 1px #ddd');
 				   $('#group-list').css('padding-bottom','2%');
 				   
-				   for(n in htmlres['group']){
-					   $('#group-list').append(htmlres['group'][n]);
+				   for(n in htmlres['fb']['group']){
+					   $('#group-list').append(htmlres['fb']['group'][n]);
 				   }
 			   }
 			   
@@ -123,8 +222,39 @@ var base = '/encore_mb';
 				  });
 			   });
 			   
+			    if(typeof(htmlres['tw']['profile']) !='undefined'){
+					$('#tw-connect').hide();
+					$('#cur-tw-profile').html(htmlres['tw']['profile']);
+				    $('#cur-tw-profile').css('border','solid 1px #ddd');
+				    $('#cur-tw-profile').css('padding','10px 0');
+				}
+
+			   $('.twacc-del-btn').click(function(){
+				   var curdiv = $(this).parent();
+				  $.post(base+'/custommodule/delete_twitter_acc',{twid:$(this).attr('tw-id')},function(res){
+					  curdiv.remove();
+					  $('#tw-connect').show();
+					  //curdiv.append(res);
+				  });
+			   });
 			   
-			   
+			   	if(typeof(htmlres['li']['profile']) !='undefined'){
+					$('#li-connect').hide();
+					$('#cur-li-profile').html(htmlres['li']['profile']);
+				    $('#cur-li-profile').css('border','solid 1px #ddd');
+				    $('#cur-li-profile').css('padding','10px 0');
+				}
+
+			   $('.liacc-del-btn').click(function(){
+				   var curdiv = $(this).parent();
+				  $.post(base+'/custommodule/delete_linkedin_acc',{},function(res){
+					  curdiv.remove();
+					  $('#li-connect').show();
+					  //curdiv.append(res);
+				  });
+			   });
+
+				
 			   
 		   }
 	   });

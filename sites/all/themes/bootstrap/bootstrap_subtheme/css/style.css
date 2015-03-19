@@ -437,7 +437,7 @@ a:hover{ text-decoration:none;}
   
   
    .broadcat-div .toggle-on{ background:#007ca9;}
-     .broadcat-div .btn { padding: 0 12px !important; margin:0; }
+     .broadcat-div .btn { padding: 7px 12px !important; margin:0; }
   
   
   
@@ -470,24 +470,24 @@ a:hover{ text-decoration:none;}
 					
 					
 					
-.left-contain .menu li:nth-child(1) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/icon2.png) no-repeat  10px center;}	
+.left-contain .menu li:nth-child(1) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/nicon1.png) no-repeat  10px center;}	
 
-.left-contain .menu li:nth-child(1) a:hover{ background:#a0d93e url(../images/icon2hover.png) no-repeat  10px center; color:#1e1e1e;}
- .left-contain .menu li:nth-child(1).active{ background:#a0d93e url(../images/icon2hover.png) no-repeat  10px center; color:#1e1e1e;}
+.left-contain .menu li:nth-child(1) a:hover{ background:#a0d93e url(../images/nicon1hover.png) no-repeat  10px center; color:#1e1e1e;}
+ .left-contain .menu li:nth-child(1).active{ background:#a0d93e url(../images/nicon1hover.png) no-repeat  10px center; color:#1e1e1e;}
 
 	
 	
-.left-contain .menu li:nth-child(2) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/icon3.png) no-repeat  10px center;}	
+.left-contain .menu li:nth-child(2) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/icon4.png) no-repeat  10px center;}	
 
-.left-contain .menu li:nth-child(2) a:hover{ background:#a0d93e url(../images/icon3hover.png) no-repeat  10px center; color:#1e1e1e;}
- .left-contain .menu li:nth-child(2) a.active{ background:#a0d93e url(../images/icon3hover.png) no-repeat  10px center; color:#1e1e1e;}		
+.left-contain .menu li:nth-child(2) a:hover{ background:#a0d93e url(../images/icon4hover.png) no-repeat  10px center; color:#1e1e1e;}
+ .left-contain .menu li:nth-child(2) a.active{ background:#a0d93e url(../images/icon4hover.png) no-repeat  10px center; color:#1e1e1e;}		
 
 
 
-.left-contain .menu li:nth-child(3) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/icon4.png) no-repeat  10px center;}	
+.left-contain .menu li:nth-child(3) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/nicon2.png) no-repeat  10px center;}	
 
-.left-contain .menu li:nth-child(3) a:hover{ background:#a0d93e url(../images/icon4hover.png) no-repeat  10px center; color:#1e1e1e;}
- .left-contain .menu li:nth-child(3) a.active{ background:#a0d93e url(../images/icon4hover.png) no-repeat  10px center; color:#1e1e1e;}		
+.left-contain .menu li:nth-child(3) a:hover{ background:#a0d93e url(../images/nicon2hover.png) no-repeat  10px center; color:#1e1e1e;}
+ .left-contain .menu li:nth-child(3) a.active{ background:#a0d93e url(../images/nicon2hover.png) no-repeat  10px center; color:#1e1e1e;}		
  
  
  
@@ -496,6 +496,19 @@ a:hover{ text-decoration:none;}
 
 .left-contain .menu li:nth-child(4) a:hover{ background:#a0d93e url(../images/icon5hover.png) no-repeat  10px center; color:#1e1e1e;}
  .left-contain .menu li:nth-child(4) a.active{ background:#a0d93e url(../images/icon5hover.png) no-repeat  10px center; color:#1e1e1e;}		
+ 
+ 
+ 
+ .left-contain .menu li:nth-child(5) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/nicon3.png) no-repeat  10px center;}	
+
+.left-contain .menu li:nth-child(5) a:hover{ background:#a0d93e url(../images/nicon3hover.png) no-repeat  10px center; color:#1e1e1e;}
+ .left-contain .menu li:nth-child(5) a.active{ background:#a0d93e url(../images/nicon3hover.png) no-repeat  10px center; color:#1e1e1e;}	
+ 
+ 
+  .left-contain .menu li:nth-child(6) a{ font-size:14px; color:#ffffff; text-transform:capitalize;  text-decoration:none; outline:none; border:none;  padding:20px 0 20px 45px;  background:url(../images/nicon4.png) no-repeat  10px center;}	
+
+.left-contain .menu li:nth-child(6) a:hover{ background:#a0d93e url(../images/nicon4hover.png) no-repeat  10px center; color:#1e1e1e;}
+ .left-contain .menu li:nth-child(6) a.active{ background:#a0d93e url(../images/nicon4hover.png) no-repeat  10px center; color:#1e1e1e;}			
  
  
 
@@ -702,6 +715,33 @@ a:hover{ text-decoration:none;}
 
 .page-show-video .vjs-default-skin .vjs-big-play-button::before{ left:130px; top:24px;}
 
+
+
+.node-type-natural-post-settings #natural-post-settings-node-form .form-item-title{ width:300px; float:left;}
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value{ width:300px; float:left; margin:0px 0 0 20px!important;} 
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value .form-text{ margin-top:13px;}
+
+
+
+#cur-tw-profile{ width:80%; margin:25px auto;}
+
+#cur-tw-profile .twacc-del-btn{ background: #07375d;
+    border: medium none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    font-family: "open_sansregular";
+    font-size: 14px;
+    height: 30px;
+    margin: 20px auto;
+	margin-bottom:0px;
+    width: 80px; text-transform:capitalize; display:block;}
+	
+	
+	.login-page ul{ display:none;}
+
  @media screen and (max-width:1264px) {
  
  .Facebook-sta .fb-part #page-list div{ float:none; width:96%; height:auto; padding:2%;}
@@ -751,7 +791,7 @@ a:hover{ text-decoration:none;}
  
  @media screen and (max-width:900px) {
  
-   .left-contain{ width:100%; float:none; background:#07375d; min-height:500px!important;}
+   .left-contain{ width:100%; float:none; background:#07375d; min-height:inherit!important;}
 
 
 
@@ -803,7 +843,16 @@ a:hover{ text-decoration:none;}
 	}
 	
 	
-	@media screen and (max-width:612px) {
+	@media screen and (max-width:660px) {
+	
+	.node-type-natural-post-settings #natural-post-settings-node-form { width:300px; margin:0 auto;}
+	
+	.node-type-natural-post-settings #natural-post-settings-node-form .form-item-title{ width:300px; float:none;}
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value{ width:300px; float:none; margin:20px 0 0 0px!important;} 
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value .form-text{ margin-top:6px;}
+
 	
 	
 	}
@@ -881,6 +930,26 @@ a:hover{ text-decoration:none;}
 
 @media screen and (max-width:344px) {
 #quicktabs-home_tab .quicktabs-tabs li a{ padding-right:4px; font-size:12px;}
+
+
+	
+	.node-type-natural-post-settings #natural-post-settings-node-form { width:300px; margin:0 auto;}
+	
+	.node-type-natural-post-settings #natural-post-settings-node-form .form-item-title{ width:300px; float:none;}
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value{ width:300px; float:none; margin:20px 0 0 0px!important;} 
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value .form-text{ margin-top:6px;}
+
+
+	
+	.node-type-natural-post-settings #natural-post-settings-node-form { width:280px; margin:0 auto;}
+	
+	.node-type-natural-post-settings #natural-post-settings-node-form .form-item-title{ width:280px; float:none;}
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value{ width:280px; float:none; margin:20px 0 0 0px!important;} 
+
+.node-type-natural-post-settings #natural-post-settings-node-form #edit-field-settings-value .form-text{ margin-top:6px;}
 
 }	
 

@@ -9,6 +9,10 @@
 
 
 function custommodule_init(){
+if(current_path() == 'admin/config/services/twitter' && empty($_SERVER['HTTP_REFERER'])){
+		header('Location: '.$GLOBALS['base_url'].'/home?qt-home_tab=1#qt-home_tab');
+	}
+	
 }
 
 function custommodule_permission() {
@@ -52,6 +56,18 @@ function custommodule_permission() {
         'custommodule custom_node_delete' => array(
             'title' => t('Node'),
             'description' => t('custom node delete'),
+        ),
+        'custommodule delete_twitter_acc' => array(
+            'title' => t('twitter'),
+            'description' => t('twitter account delete'),
+        ),
+        'custommodule delete_linkedin_acc' => array(
+            'title' => t('linkedin'),
+            'description' => t('linkedin account delete'),
+        ),
+        'custommodule get_linkedin_profile' => array(
+            'title' => t('linked'),
+            'description' => t('get linkedin profile'),
         ),
         'custommodule config' => array(
             'title' => t('Admin Activity'),
@@ -142,6 +158,30 @@ function custommodule_menu() {
         'page callback' => 'custom_node_delete',
         'access callback' => TRUE,
         'access arguments' => array('custom custom_node_delete'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/delete_twitter_acc'] = array(
+        'title' => 'delete twitter acc',
+        'page callback' => 'delete_twitter_acc',
+        'access callback' => TRUE,
+        'access arguments' => array('custom delete_twitter_acc'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/delete_linkedin_acc'] = array(
+        'title' => 'delete linkedin acc',
+        'page callback' => 'delete_linkedin_acc',
+        'access callback' => TRUE,
+        'access arguments' => array('custom delete_linkedin_acc'),
+        'expanded' => TRUE,
+        'type'=>MENU_NORMAL_ITEM,
+    );
+    $items['custommodule/get_linkedin_profile'] = array(
+        'title' => 'get linkedin profile',
+        'page callback' => 'get_linkedin_profile',
+        'access callback' => TRUE,
+        'access arguments' => array('custom get_linkedin_profile'),
         'expanded' => TRUE,
         'type'=>MENU_NORMAL_ITEM,
     );
@@ -301,7 +341,9 @@ if (isset($result['node'])) {
 function get_social_post(){
 	global $user;
 	
-	$data=array();
+	$data['fb']=array();
+	$data['tw']=array();
+	$data['li']=array();
 	
 	$news_items = array();
 	
@@ -343,7 +385,7 @@ if (isset($result['node'])) {
 		
 				$res = json_decode($res);
 		
-				$data['profile'] = '<h2>Facebook Profile:</h2>
+				$data['fb']['profile'] = '<h2>Facebook Profile:</h2>
 						<h2><img src="https://graph.facebook.com/'.$field_social_media_id.'/picture" />
 						<span>'.$res->name.'</span></h2>';
 
@@ -354,7 +396,7 @@ if (isset($result['node'])) {
 				$res = file_get_contents("https://graph.facebook.com/".$field_social_media_id."?fields=name&access_token=".$field_token);
 				$res = json_decode($res);
 				
-				$data['page'][] = '<div><a target="_blank" href="https://www.facebook.com/pages/'.$res->name.'/'.$field_social_media_id.'">
+				$data['fb']['page'][] = '<div><a target="_blank" href="https://www.facebook.com/pages/'.$res->name.'/'.$field_social_media_id.'">
 									<img style="padding:3px; width:50px; border:1px solid #9f9e8c;" alt="" src="http://graph.facebook.com/'.$field_social_media_id.'/picture">
 									</a>
 									<a target="_blank" href="https://www.facebook.com/pages/'.$res->name.'/'.$field_social_media_id.'">'.$res->name.'</a>
@@ -365,7 +407,7 @@ if (isset($result['node'])) {
 				$res = file_get_contents("https://graph.facebook.com/".$field_social_media_id."?fields=name&access_token=".$field_token);
 				$res = json_decode($res);
 				
-				$data['group'][] = '<div><a target="_blank" href="https://www.facebook.com/groups/'.$field_social_media_id.'">
+				$data['fb']['group'][] = '<div><a target="_blank" href="https://www.facebook.com/groups/'.$field_social_media_id.'">
 									<img style="padding:3px; width:50px; border:1px solid #9f9e8c;" alt="" src="http://graph.facebook.com/'.$field_social_media_id.'/picture">
 									</a>
 									<a target="_blank" href="https://www.facebook.com/groups/'.$field_social_media_id.'">'.$res->name.'</a>
@@ -375,6 +417,36 @@ if (isset($result['node'])) {
 		}
 				
 	}
+	
+	
+	$twres = db_select('twitter_account','t')
+    ->fields('t')
+	->condition('uid', intval($user->uid),'=')
+    ->execute()
+    ->fetchAssoc();
+	
+	if($twres){
+		$data['tw']['profile'] = '<h2>Twitter Profile:</h2><h2><img src="'.$twres['profile_image_url'].'"><span>'.$twres['name'].'</span></h2><input type="button" value="delete" class="twacc-del-btn" tw-id="'.$twres['twitter_uid'].'">';
+		
+	}	
+	
+	module_load_include('inc', 'linkedin');
+
+
+    global $user;
+	
+	$uid = intval($user->uid);
+	
+	$response = _linkedin_get_profile_fields($uid,array('id','first-name','last-name','picture-url'));
+	
+	
+	if (array_key_exists('id', $response)) {
+	
+		$data['li']['profile'] = '<h2>LinkedIn Profile:</h2><h2><img src="'.$response['picture-url'].'"><span>'.$twres['first-name']." ".$twres['last-name'].'</span></h2><input type="button" value="delete" class="liacc-del-btn" >';
+		
+	
+	}
+
 	
 	echo json_encode($data);
 
@@ -568,6 +640,55 @@ function custom_node_delete(){
 	node_delete($nid);
 }
 
+function delete_twitter_acc(){
+	$twid = $_POST['twid'];
+	global $user;
+	
+	$uid = intval($user->uid);
+	
+	db_delete('twitter_account')
+  ->condition('twitter_uid', $twid)
+  ->condition('uid', $uid)
+  ->execute();
+
+}
+
+function delete_linkedin_acc(){
+	
+	global $user;
+	
+	$uid = intval($user->uid);
+	
+	db_delete('linkedin_token')
+  ->condition('uid', $uid)
+  ->execute();
+
+	db_delete('authmap')
+  ->condition('module', 'linkedin')
+  ->condition('uid', $uid)
+  ->execute();
+
+}
+
+
+function get_linkedin_profile(){
+
+	module_load_include('inc', 'linkedin');
+
+
+    global $user;
+	
+	$uid = intval($user->uid);
+	
+	$response = _linkedin_get_profile_fields($uid,array('id','first-name','last-name','picture-url'));
+	
+	print_r($response);exit;
+	
+
+
+
+}
+
 
 
 
@@ -684,6 +805,8 @@ function MYMODULE_submit_post1 ($form, &$form_state) {
 
 function MYMODULE_submit_post ($form, &$form_state) {
     //code here
+	
+	set_time_limit(0);
     
 	global $user;
 	
@@ -757,12 +880,46 @@ function MYMODULE_submit_post ($form, &$form_state) {
 				
 				
 				
-				
 				if($subType == 'profile'){
 					$url = 'https://graph.facebook.com/me/feed';
 				}else{
 					$url = 'https://graph.facebook.com/'.$mediaId.'/feed';
 				}
+				
+				$flag=1;
+				
+				$query1 = new EntityFieldQuery();
+				$query1->entityCondition('entity_type', 'node')
+					  ->entityCondition('bundle', 'post_report')
+					  ->propertyCondition('status', NODE_PUBLISHED)
+					  ->fieldCondition('field_report_media_id', 'value', $mediaId, '=')
+					   ->range(0, 100)
+					  ->addMetaData('account', user_load(1)); // Run the query as user 1.
+
+					$result1 = $query1->execute();
+					if (isset($result1['node'])) {
+					  $news_items_nids2 = array_keys($result1['node']);
+					  $news_items2 = entity_load('node', $news_items_nids2);
+					  
+					  foreach($news_items2 as $row){
+						$post_id = $row->field_fb_post_id['und'][0]['value'];
+						$res = file_get_contents($url."?access_token=".$token."&limit=2");
+						$res = json_decode($res);
+						foreach($res->data as $row2){
+							if($post_id == $row2->id){
+								$flag =0;
+							}
+						}
+						
+
+					  }
+					  
+					}
+					
+					
+					
+					if($flag){
+				
 				
 				if(empty($link)){
 					$attachment =  array(
@@ -848,14 +1005,17 @@ function MYMODULE_submit_post ($form, &$form_state) {
 		$postnode->field_report_post_name[$node->language][] = array(
 			'value' => $mediaName,
 		);
+		$postnode->field_report_media_id[$node->language][] = array(
+			'value' => $mediaId,
+		);
 		$postnode->field_fb_post_id[$node->language][] = array(
 			'value' => $post_id,
 		);
 		$postnode = node_submit($postnode); // Prepare node for saving
 		node_save($postnode);
 				
-				
-				
+			
+		}	
 				
 				
 				
